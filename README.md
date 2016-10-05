@@ -5,8 +5,7 @@ This is a LiveSplit autosplitter component for Fez on PC.
 - Automatically start the timer when you start speedrun mode.
 - Automatically reset the timer when you reset the run or leave speedrun mode.
 
-
-- Currently only includes splits for the Any% route:
+- Currently includes splits for the Any% route:
   - Village (*splits when entering Nature Hub from Memory Core*)
   - Bell Tower (*splits when entering shortcut door back to Nature Hub*)
   - Waterfall (*splits on warp back to Nature Hub*)
@@ -15,6 +14,8 @@ This is a LiveSplit autosplitter component for Fez on PC.
   - Zu City Ruins (*splits on warp back to Ruins*)
   - Lighthouse (*splits on entering shortcut door to Memory Core*)
   - End (*splits on entering door out of Gomez's House*)
+
+  Splits for other categories (i.e. 209.4% and All Cubes) will be added in the future.
 
 ## Installation
 - Go to "Edit Splits..." in LiveSplit.
