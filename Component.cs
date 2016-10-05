@@ -74,7 +74,7 @@ namespace LiveSplit.Fez
 
         Process getGameProcess()
         {
-            Process process = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.ToLower() == "FEZ" && !p.HasExited);
+            Process process = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.ToLower() == "fez" && !p.HasExited);
 
             if (process != null)
             {
