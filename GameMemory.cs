@@ -12,9 +12,11 @@ namespace LiveSplit.Fez
             this.Add(new MemoryWatcher<int>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x258, 0x88, 0x32C, 0x8)) { Name = "DoorDest" });
             this.Add(new MemoryWatcher<byte>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x258, 0x88, 0x39B)) { Name = "DoorEnter" });
             this.Add(new MemoryWatcher<byte>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x258, 0x88, 0x368)) { Name = "GomezState" });
-            this.Add(new MemoryWatcher<byte>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x318, 0x50, 0x32C, 0x274)) { Name = "Speedrun" });
-            //this.Add(new MemoryWatcher<byte>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x258, 0x78, 0x60, 0x40)) { Name = "Cubes" });
-            //this.Add(new MemoryWatcher<byte>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x258, 0x78, 0x60, 0x44)) { Name = "Anticubes" });
+
+            this.Add(new MemoryWatcher<byte>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x358, 0x8, 0x32C, 0x274)) { Name = "SpeedrunBool" });
+
+            this.Add(new MemoryWatcher<byte>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x258, 0x3B8, 0xF8, 0x2C, 0x14)) { Name = "TimerBool" });
+            //this.Add(new MemoryWatcher<long>(new DeepPointer("Steam2.dll", 0x27B5D4, 0x258, 0x3B8, 0xF8, 0x2C, 0x4)) { Name = "TimerValue" });
         }
     }
 
@@ -23,9 +25,13 @@ namespace LiveSplit.Fez
         private FezData data;
         private InfoList splits;
 
-        private int CurrentLevel = 0;
-        private int NextLevel = 0;
-        private bool isLoading = false;
+        private int CurrentLevel;
+        private int NextLevel;
+        private bool isLoading;
+        private bool inDoor;
+
+        public event EventHandler LoadStart;
+        public event EventHandler LoadEnd;
 
         public FezMemory()
         {
@@ -37,8 +43,14 @@ namespace LiveSplit.Fez
             data = new FezData();
         }
 
-        public void setSplits(FezSettings settings)
+        public void Initialize(FezSettings settings)
         {
+            CurrentLevel = 0;
+            NextLevel = 0;
+            isLoading = false;
+            inDoor = false;
+
+            //set splits
             splits = new InfoList();
             splits.AddRange(DefaultInfo.BaseSplits);
 
@@ -51,9 +63,9 @@ namespace LiveSplit.Fez
 
         public bool doStart(Process game)
         {
-            data["Speedrun"].Update(game);
+            data["TimerBool"].Update(game);
 
-            if (Convert.ToByte(data["Speedrun"].Current) == 1)
+            if (Convert.ToByte(data["TimerBool"].Current) == 1)
                 return true;
 
             return false;
@@ -61,9 +73,9 @@ namespace LiveSplit.Fez
 
         public bool doReset(Process game)
         {
-            data["Speedrun"].Update(game);
+            data["SpeedrunBool"].Update(game);
 
-            if (Convert.ToByte(data["Speedrun"].Current) == 0)
+            if (Convert.ToByte(data["SpeedrunBool"].Current) == 0)
                 return true;
 
             return false;
@@ -72,19 +84,34 @@ namespace LiveSplit.Fez
         public bool doSplit(Process game)
         {
             data.UpdateAll(game);
-
-            byte _door = Convert.ToByte(data["DoorEnter"].Current);
-            if ( _door == 1 && isLoading == false)
+            
+            //check for loading
+            byte _load = Convert.ToByte(data["TimerBool"].Current);
+            if (_load == 0 && isLoading == false)
             {
-                NextLevel = Convert.ToInt32(data["DoorDest"].Current);
+                LoadStart?.Invoke(this, EventArgs.Empty);
                 isLoading = true;
             }
-            else if (_door == 0 && isLoading == true)
+            else if (_load == 1 && isLoading == true)
             {
-                CurrentLevel = NextLevel;
+                LoadEnd?.Invoke(this, EventArgs.Empty);
                 isLoading = false;
             }
+            
+            //check for update to room
+            byte _door = Convert.ToByte(data["DoorEnter"].Current);
+            if ( _door == 1 && inDoor == false)
+            {
+                NextLevel = Convert.ToInt32(data["DoorDest"].Current);
+                inDoor = true;
+            }
+            else if (_door == 0 && inDoor == true)
+            {
+                CurrentLevel = NextLevel;
+                inDoor = false;
+            }
 
+            //check for splits
             foreach (var _split in splits)
             {
                 int count = 0;

@@ -14,7 +14,7 @@ namespace LiveSplit.Fez
             new Info("Tree", new Dictionary<string,int> { { "DoorEnter", 1 }, { "CurrentLevel", 0x55005A }, { "NextLevel", 0x55005A } }),
             new Info("ZuRuins", new Dictionary<string,int> { { "GomezState", 0x60 }, { "CurrentLevel", 0x490056 } }),
             new Info("Lighthouse", new Dictionary<string,int> { { "DoorEnter", 1 }, { "CurrentLevel", 0x490050 }, { "NextLevel", 0x45004D } }),
-            new Info("End", new Dictionary<string,int> { { "DoorEnter", 1 }, { "CurrentLevel", 0x590050 }, { "NextLevel", 0x490056 } })
+            new Info("End", new Dictionary<string,int> { { "DoorEnter", 1 }, { "CurrentLevel", 0x590050 }, { "NextLevel", 0x490056 }, { "TimerBool", 0 } })
         };
     }
 

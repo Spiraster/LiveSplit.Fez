@@ -1,3 +1,8 @@
+1.1.0 (2016-10-20):
+- Implemented load removal for IGT
+- Fixed pointers (these always work except on 1st launch after a reboot)
+- Adjusted timing for auto start and "End" split to better match the in-game timer
+
 1.0.0 (2016-10-04):
 - Initial release
 - Implemented auto start/reset

@@ -19,7 +19,7 @@ namespace LiveSplit.Fez
         public FezSettings settings { get; set; }
 
         private Process game { get; set; }
-        private TimerModel model { get; set; }
+        private TimerModel timer { get; set; }
         private FezMemory memory { get; set; }
 
         private Timer processTimer;
@@ -28,13 +28,15 @@ namespace LiveSplit.Fez
         {
             settings = new FezSettings();
 
-            model = new TimerModel() { CurrentState = state };
-            model.CurrentState.OnStart += timer_OnStart;
+            timer = new TimerModel() { CurrentState = state };
+            timer.CurrentState.OnStart += timer_OnStart;
 
             processTimer = new Timer() { Interval = 2000, Enabled = true };
             processTimer.Tick += processTimer_OnTick;
 
             memory = new FezMemory();
+            memory.LoadStart += memory_OnLoadStart;
+            memory.LoadEnd += memory_OnLoadEnd;
         }
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
@@ -47,7 +49,7 @@ namespace LiveSplit.Fez
                     {
                         if (memory.doStart(game))
                         {
-                            model.Start();
+                            timer.Start();
                         }
                     }
                 }
@@ -56,14 +58,14 @@ namespace LiveSplit.Fez
                     if (settings.AutoReset)
                     {
                         if (memory.doReset(game))
-                            model.Reset();
+                            timer.Reset();
                     }
                 }
 
                 if (state.CurrentPhase == TimerPhase.Running)
                 {
                     if (memory.doSplit(game))
-                        model.Split();
+                        timer.Split();
                 }
             }
             else if (!processTimer.Enabled)
@@ -87,10 +89,18 @@ namespace LiveSplit.Fez
 
         void timer_OnStart(object sender, EventArgs e)
         {
-            if (game != null && !game.HasExited)
-            {
-                memory.setSplits(settings);
-            }
+            timer.InitializeGameTime();
+            memory.Initialize(settings);
+        }
+
+        void memory_OnLoadStart(object sender, EventArgs e)
+        {
+            timer.CurrentState.IsGameTimePaused = true;
+        }
+
+        void memory_OnLoadEnd(object sender, EventArgs e)
+        {
+            timer.CurrentState.IsGameTimePaused = false;
         }
 
         void processTimer_OnTick(object sender, EventArgs e)
@@ -107,7 +117,7 @@ namespace LiveSplit.Fez
 
         public override void Dispose()
         {
-            model.CurrentState.OnStart -= timer_OnStart;
+            timer.CurrentState.OnStart -= timer_OnStart;
             processTimer.Tick -= processTimer_OnTick;
         }
 

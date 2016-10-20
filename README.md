@@ -1,9 +1,9 @@
 # LiveSplit.Fez
-This is a LiveSplit autosplitter component for Fez on PC.
+This is a LiveSplit autosplitter component for Fez (v1.12) on PC.
 
 ## Features
-- Automatically start the timer when you start speedrun mode.
-- Automatically reset the timer when you reset the run or leave speedrun mode.
+- Automatic start and reset when using speedrun mode (--gotta-gomez-fast)
+- Load removal for the "Game Time" option in LiveSplit
 
 - Currently includes splits for the Any% route:
   - Village (*splits when entering Nature Hub from Memory Core*)
@@ -19,7 +19,7 @@ This is a LiveSplit autosplitter component for Fez on PC.
 
 ## Installation
 - Go to "Edit Splits..." in LiveSplit.
-- Click the "Activate" button to download and enable the autosplitter (make sure the game name is correct).
+- Enter the game name and click the "Activate" button to enable the autosplitter.
 
 ## Set-up
 - The tree view lists all the events supported by the autosplitter.
