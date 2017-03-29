@@ -1,3 +1,5 @@
+***This component has been replaced by the ASL script found at: https://github.com/Spiraster/ASLScripts/tree/master/LiveSplit.FEZ***
+
 # LiveSplit.Fez
 This is a LiveSplit autosplitter component for Fez (v1.12) on PC.
 
